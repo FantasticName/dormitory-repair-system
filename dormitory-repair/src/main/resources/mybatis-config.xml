@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <!-- 开启驼峰命名自动映射-->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <!-- 打印 SQL 日志 -->
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
+
+        <!-- 设置数据库SQL语言默认为Mysql的语法 -->
+        <setting name="databaseId" value="mysql"/>
+
+
+    </settings>
+
+
+    <!-- 数据库连接 -->
+    <environments default="development">
+
+        <!-- 开发 -->
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/dormitory_repair?useSSL=false&amp;serverTimezone=Asia/Shanghai"/>
+                <property name="username" value="root"/>
+                <property name="password" value="123456"/>
+            </dataSource>
+
+
+        </environment>
+    </environments>
+
+
+
+
+    <!-- 映射文件 -->
+    <mappers>
+        <package name="io.github.fantasticname.dormitory.repair.mapper"/>
+
+<!--        <mapper resource="io/github/fantasticname/dormitory/repair/UserMapper.xml"/>-->
+<!--        <mapper resource="io/github/fantasticname/dormitory/repair/DormBindingMapper.xml"/>-->
+<!--        <mapper resource="io/github/fantasticname/dormitory/repair/RepairOrderMapper.xml"/>-->
+    </mappers>
+</configuration>

@@ -1,0 +1,47 @@
+# 编译输出
+target/
+out/
+
+# IDE 配置文件（IntelliJ IDEA）
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Eclipse 配置文件
+.settings/
+.project
+.classpath
+
+# VS Code 配置文件
+.vscode/
+
+# Maven 本地仓库（通常不忽略，但如果你把整个仓库放在项目下，可取消注释）
+# mvnw 和 mvnw.cmd 是 Maven Wrapper 的一部分，建议提交，因此不忽略
+
+# 操作系统生成文件
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# 日志文件
+*.log
+
+# 打包临时文件
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.7z
+
+# 测试覆盖率报告
+coverage/
+.nyc_output/
+
+# 本地环境配置（如有敏感信息）
+.env
+.env.local
+*.secret
