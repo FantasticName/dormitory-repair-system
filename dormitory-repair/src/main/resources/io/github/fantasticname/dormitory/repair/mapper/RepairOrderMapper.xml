@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.github.fantasticname.dormitory.repair.mapper.RepairOrderMapper">
+
+    <resultMap id="BaseResultMap" type="io.github.fantasticname.dormitory.repair.entity.RepairOrder">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="device_type" property="deviceType"/>
+        <result column="description" property="description"/>
+        <result column="status" property="status"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <insert id="insertOrder" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO repair_order (user_id, device_type, description, status, created_at, updated_at)
+        VALUES (#{userId}, #{deviceType}, #{description}, #{status}, NOW(), NOW())
+    </insert>
+
+
+<!--     根据用户ID查询他的维修单-->
+    <select id="findOrderByUserId" resultMap="BaseResultMap">
+        SELECT * FROM repair_order WHERE user_id = #{userId} ORDER BY created_at DESC
+    </select>
+
+
+
+<!--     根据状态查询所有维修单-->
+    <select id="findAllByStatus" resultMap="BaseResultMap">
+        SELECT * FROM repair_order
+        <if test="status != null">
+            WHERE status = #{status}
+        </if>
+        ORDER BY created_at DESC
+    </select>
+
+<!--     根据主键ID查询维修单-->
+    <select id="findOrderById" resultMap="BaseResultMap">
+        SELECT * FROM repair_order WHERE id = #{id}
+    </select>
+
+<!--     更新维修单状态-->
+    <update id="updateStatus">
+        UPDATE repair_order
+        SET status = #{status}, updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+<!--     删除维修单-->
+    <delete id="deleteOrderById">
+        DELETE FROM repair_order WHERE id = #{id}
+    </delete>
+</mapper>
