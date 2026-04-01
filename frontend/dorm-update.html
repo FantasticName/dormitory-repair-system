@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>宿舍报修系统 - 修改宿舍</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>宿舍报修系统</h1>
+        <div class="dorm-update-form">
+            <h2>修改宿舍</h2>
+            <form id="dormUpdateForm">
+                <div class="form-group">
+                    <label for="building">楼栋</label>
+                    <input type="text" id="building" name="building" required>
+                </div>
+                <div class="form-group">
+                    <label for="room">房间号</label>
+                    <input type="text" id="room" name="room" required>
+                </div>
+                <button type="submit" class="btn">修改</button>
+                <a href="home.html" class="btn btn-secondary">返回首页</a>
+            </form>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

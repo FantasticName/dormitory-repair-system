@@ -2,122 +2,106 @@ package io.github.fantasticname.dormitory.repair.service;
 
 import io.github.fantasticname.dormitory.repair.entity.User;
 import io.github.fantasticname.dormitory.repair.mapper.UserMapper;
-import io.github.fantasticname.dormitory.repair.util.SqlSessionUtil;
-import org.apache.ibatis.session.SqlSession;
+import io.github.fantasticname.dormitory.repair.util.PasswordUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * 用户服务类
+ * 
+ * @author FantasticName
+ */
+@Service
 public class UserService {
 
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+
+    @Autowired
+    private UserMapper userMapper;
+
     /**
-     *注册
-     *@return 返回一个布尔，true表示注册成功，false表示失败
+     * 注册
+     * 
+     * @param account 账号
+     * @param password 密码
+     * @param role 角色
+     * @return 返回一个布尔，true表示注册成功，false表示失败
      */
+    @Transactional
     public boolean register(String account, String password, Integer role) {
-        SqlSession session = null;
-        try {
-            // 创建mapper代理对象   // 手动事务
-            session = SqlSessionUtil.getSqlSession(false);
-            UserMapper mapper = session.getMapper(UserMapper.class);
-
-            // 检查账号是否已存在
-            User exist = mapper.findUserByAccount(account);
-            if (exist != null) {
-                return false;
-            }
-
-
-            // 创建User实体对象
-            User user = new User();
-            user.setAccount(account);
-            user.setPassword(password);
-            user.setRole(role);
-            int rows = mapper.insertUser(user);
-
-            // 提交事务（原子性操作：检查账号存在与否，以及insert用户到数据库用户表）
-            session.commit();
-            return rows > 0;
-        } catch (Exception e) {
-            if (session != null) {
-                session.rollback(); // 回滚
-            }
-            e.printStackTrace();
+        // 检查账号是否已存在
+        User exist = userMapper.findUserByAccount(account);
+        if (exist != null) {
+            logger.warn("账号已存在: {}", account);
             return false;
-        } finally {
-            if (session != null) {
-                session.close();
-            }
         }
+
+        // 创建User实体对象
+        User user = new User();
+        user.setAccount(account);
+        user.setPassword(PasswordUtil.encrypt(password));
+        user.setRole(role);
+        int rows = userMapper.insertUser(user);
+
+        logger.info("用户注册成功: {}", account);
+        return rows > 0;
     }
 
-    // 登录
+    /**
+     * 登录
+     * 
+     * @param account 账号
+     * @param password 密码
+     * @return 用户对象
+     */
     public User login(String account, String password) {
-        try (SqlSession session = SqlSessionUtil.getSqlSession()) {
+        User user = userMapper.findUserByAccount(account);
 
-            // 创建mapper代理对象
-            UserMapper mapper = session.getMapper(UserMapper.class);
-            User user = mapper.findUserByAccount(account);
-
-            // 如果账号存在且密码正确，返回用户对象
-            if (user != null && user.getPassword().equals(password)) {
-                return user;
-            }
-
-            // 否则返回空引用
-            return null;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+        // 如果账号存在且密码正确，返回用户对象
+        if (user != null && PasswordUtil.matches(password, user.getPassword())) {
+            logger.info("用户登录成功: {}", account);
+            return user;
         }
+
+        logger.warn("登录失败: {}", account);
+        return null;
     }
 
-
-
-
-    // 修改密码
+    /**
+     * 修改密码
+     * 
+     * @param userId 用户ID
+     * @param oldPassword 旧密码
+     * @param newPassword 新密码
+     * @return 是否成功
+     */
+    @Transactional
     public boolean changePassword(Long userId, String oldPassword, String newPassword) {
-        SqlSession session = null;
-        try {
+        User user = userMapper.findUserById(userId);
 
-            // 创建session对象 和 mapper代理对象
-            session = SqlSessionUtil.getSqlSession(false);
-            UserMapper mapper = session.getMapper(UserMapper.class);
-            User user = mapper.findUserById(userId);
-
-            // 如果用户不存在或旧密码错误，返回false
-            if (user == null || !user.getPassword().equals(oldPassword)) {
-                return false;
-            }
-
-            // 否则更新密码
-            int rows = mapper.updatePassword(userId, newPassword);
-
-            // 提交事务
-            session.commit();
-
-            // 更新成功，返回true
-            return rows > 0;
-
-        } catch (Exception e) {
-            if (session != null) {
-                session.rollback();
-            }
-            e.printStackTrace();
+        // 如果用户不存在或旧密码错误，返回false
+        if (user == null || !PasswordUtil.matches(oldPassword, user.getPassword())) {
+            logger.warn("修改密码失败: 用户不存在或密码错误");
             return false;
-        } finally {
-            if (session != null) {
-                session.close();
-            }
         }
+
+        // 否则更新密码
+        int rows = userMapper.updatePassword(userId, PasswordUtil.encrypt(newPassword));
+
+        logger.info("用户密码修改成功: {}", userId);
+        return rows > 0;
     }
 
-    // 根据ID获取用户信息
+    /**
+     * 根据ID获取用户信息
+     * 
+     * @param userId 用户ID
+     * @return 用户对象
+     */
     public User getUserById(Long userId) {
-        try (SqlSession session = SqlSessionUtil.getSqlSession()) {
-            UserMapper mapper = session.getMapper(UserMapper.class);
-            return mapper.findUserById(userId);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        return userMapper.findUserById(userId);
     }
 }
