@@ -13,6 +13,10 @@
         <label for="description">故障描述</label>
         <textarea id="description" v-model="form.description" rows="4" required></textarea>
       </div>
+      <div class="form-group">
+        <label for="file">上传图片 (可选)</label>
+        <input type="file" id="file" @change="handleFileChange" accept="image/*">
+      </div>
       <button type="submit" class="btn">提交订单</button>
     </form>
   </div>
@@ -28,16 +32,28 @@ export default {
       form: {
         deviceType: '',
         description: ''
-      }
+      },
+      file: null
     }
   },
   methods: {
+    handleFileChange(event) {
+      this.file = event.target.files[0]
+    },
     async handleCreateOrder() {
       try {
-        const params = new URLSearchParams()
-        params.append('deviceType', this.form.deviceType)
-        params.append('description', this.form.description)
-        const response = await api.post('/repair/create', params)
+        const formData = new FormData()
+        formData.append('deviceType', this.form.deviceType)
+        formData.append('description', this.form.description)
+        if (this.file) {
+          formData.append('file', this.file)
+        }
+        
+        const response = await api.post('/repair/create', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        })
         if (response.code === 200) {
           alert('订单创建成功')
           this.$router.push('/home')

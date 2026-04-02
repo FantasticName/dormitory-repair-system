@@ -11,11 +11,12 @@
         <result column="status" property="status"/>
         <result column="created_at" property="createdAt"/>
         <result column="updated_at" property="updatedAt"/>
+        <result column="image_path" property="imagePath"/>
     </resultMap>
 
     <insert id="insertOrder" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO repair_order (user_id, device_type, description, status, created_at, updated_at)
-        VALUES (#{userId}, #{deviceType}, #{description}, #{status}, NOW(), NOW())
+        INSERT INTO repair_order (user_id, device_type, description, status, image_path, created_at, updated_at)
+        VALUES (#{userId}, #{deviceType}, #{description}, #{status}, #{imagePath}, NOW(), NOW())
     </insert>
 
 
@@ -29,9 +30,11 @@
 <!--     根据状态查询所有维修单-->
     <select id="findAllByStatus" resultMap="BaseResultMap">
         SELECT * FROM repair_order
-        <if test="status != null">
-            WHERE status = #{status}
-        </if>
+        <where>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+        </where>
         ORDER BY created_at DESC
     </select>
 
@@ -44,6 +47,13 @@
     <update id="updateStatus">
         UPDATE repair_order
         SET status = #{status}, updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+<!--     更新订单图片路径 -->
+    <update id="updateImagePath">
+        UPDATE repair_order
+        SET image_path = #{imagePath}, updated_at = NOW()
         WHERE id = #{id}
     </update>
 

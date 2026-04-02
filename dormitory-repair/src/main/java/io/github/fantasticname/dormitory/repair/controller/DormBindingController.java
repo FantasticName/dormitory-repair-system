@@ -40,8 +40,14 @@ public class DormBindingController {
     @PostMapping("/bind")
     public Map<String, Object> bindDorm(@RequestParam String building, @RequestParam String room, HttpServletRequest request) {
         Long userId = jwtUtil.getUserIdFromRequest(request);
-        if (userId == null) {
+        Integer role = (Integer) request.getAttribute("role");
+        
+        if (userId == null || role == null) {
             throw new BusinessException(401, "未授权");
+        }
+        
+        if (role != 1) {
+            throw new BusinessException(403, "仅学生可绑定宿舍");
         }
 
         boolean success = dormBindingService.bindDorm(userId, building, room);
@@ -88,8 +94,14 @@ public class DormBindingController {
     @PostMapping("/update")
     public Map<String, Object> updateDorm(@RequestParam String building, @RequestParam String room, HttpServletRequest request) {
         Long userId = jwtUtil.getUserIdFromRequest(request);
-        if (userId == null) {
+        Integer role = (Integer) request.getAttribute("role");
+        
+        if (userId == null || role == null) {
             throw new BusinessException(401, "未授权");
+        }
+        
+        if (role != 1) {
+            throw new BusinessException(403, "仅学生可修改宿舍信息");
         }
 
         boolean success = dormBindingService.updateBind(userId, building, room);

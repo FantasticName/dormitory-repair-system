@@ -29,7 +29,7 @@
       </div>
       <div v-if="order.imagePath" class="info-item">
         <span class="label">故障图片:</span>
-        <img :src="order.imagePath" alt="故障图片" class="order-image">
+        <img :src="'/api/' + order.imagePath" alt="故障图片" class="order-image">
       </div>
       <div class="upload-section">
         <h3>上传故障图片</h3>
@@ -133,6 +133,7 @@ export default {
         case 0: return 'status-pending'
         case 1: return 'status-processing'
         case 2: return 'status-completed'
+        case 3: return 'status-cancelled'
         default: return ''
       }
     },
@@ -141,6 +142,7 @@ export default {
         case 0: return '待处理'
         case 1: return '处理中'
         case 2: return '已完成'
+        case 3: return '已取消'
         default: return '未知'
       }
     }
@@ -235,6 +237,11 @@ export default {
 
 .status-completed {
   background: #4caf50;
+  color: white;
+}
+
+.status-cancelled {
+  background: #9e9e9e;
   color: white;
 }
 

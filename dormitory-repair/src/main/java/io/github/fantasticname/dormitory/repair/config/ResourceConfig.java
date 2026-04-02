@@ -19,8 +19,9 @@ public class ResourceConfig implements WebMvcConfigurer {
                 .addResourceLocations("classpath:/static/");
         
         // 配置上传文件访问
+        String projectPath = System.getProperty("user.dir");
         registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:uploads/");
+                .addResourceLocations("file:" + projectPath + "/uploads/");
         
         // 配置前端页面访问
         registry.addResourceHandler("/**")

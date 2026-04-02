@@ -2,6 +2,8 @@ package io.github.fantasticname.dormitory.repair.service;
 
 import io.github.fantasticname.dormitory.repair.entity.User;
 import io.github.fantasticname.dormitory.repair.mapper.UserMapper;
+import io.github.fantasticname.dormitory.repair.exception.BusinessException;
+import io.github.fantasticname.dormitory.repair.util.AccountValidatorWithRegularExpressionUtil;
 import io.github.fantasticname.dormitory.repair.util.PasswordUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +34,17 @@ public class UserService {
      */
     @Transactional
     public boolean register(String account, String password, Integer role) {
+        // 正则校验账号
+        if (role == 1) { // 学生
+            if (!AccountValidatorWithRegularExpressionUtil.isValidStudentAccount(account)) {
+                throw new BusinessException(400, "学生学号格式错误，需以3125或3225开头且共10位数字");
+            }
+        } else if (role == 2) { // 管理员
+            if (!AccountValidatorWithRegularExpressionUtil.isValidAdminAccount(account)) {
+                throw new BusinessException(400, "管理员工号格式错误，需以0025开头且共10位数字");
+            }
+        }
+
         // 检查账号是否已存在
         User exist = userMapper.findUserByAccount(account);
         if (exist != null) {

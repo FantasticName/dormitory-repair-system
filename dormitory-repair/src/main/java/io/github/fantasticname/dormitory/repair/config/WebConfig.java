@@ -29,9 +29,9 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        // 注册JWT拦截器，除了登录和注册接口外，其他接口都需要认证
+        // 注册JWT拦截器，除了登录、注册和上传的文件外，其他接口都需要认证
         registry.addInterceptor(jwtInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/auth/login", "/auth/register");
+                .excludePathPatterns("/auth/login", "/auth/register", "/uploads/**", "/static/**");
     }
 }

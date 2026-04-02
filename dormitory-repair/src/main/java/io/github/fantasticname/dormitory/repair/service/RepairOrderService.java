@@ -89,7 +89,10 @@ public class RepairOrderService {
      * @return 维修订单列表
      */
     public List<RepairOrder> getAllOrders(Integer status) {
-        return repairOrderMapper.findAllByStatus(status);
+        logger.info("Service: 查询所有订单, status: {}", status);
+        List<RepairOrder> orders = repairOrderMapper.findAllByStatus(status);
+        logger.info("Service: 查询到订单数量: {}", orders != null ? orders.size() : 0);
+        return orders;
     }
 
 
