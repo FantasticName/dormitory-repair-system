@@ -25,7 +25,11 @@ public class JwtInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // 从请求头获取token
-        String token = request.getHeader("Authorization");
+        String authorizationHeader = request.getHeader("Authorization");
+        String token = null;
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            token = authorizationHeader.substring(7);
+        }
         if (token == null || token.isEmpty()) {
             // 无token，返回401
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

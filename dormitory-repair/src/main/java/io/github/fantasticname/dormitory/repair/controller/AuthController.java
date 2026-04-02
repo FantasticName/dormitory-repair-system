@@ -1,6 +1,8 @@
 package io.github.fantasticname.dormitory.repair.controller;
 
 import io.github.fantasticname.dormitory.repair.entity.User;
+import io.github.fantasticname.dormitory.repair.vo.UserVO;
+import org.springframework.beans.BeanUtils;
 import io.github.fantasticname.dormitory.repair.exception.BusinessException;
 import io.github.fantasticname.dormitory.repair.service.UserService;
 import io.github.fantasticname.dormitory.repair.util.JwtUtil;
@@ -49,7 +51,9 @@ public class AuthController {
         result.put("code", 200);
         result.put("message", "登录成功");
         result.put("token", token);
-        result.put("user", user);
+        UserVO userVO = new UserVO();
+BeanUtils.copyProperties(user, userVO);
+result.put("user", userVO);
         return result;
     }
 

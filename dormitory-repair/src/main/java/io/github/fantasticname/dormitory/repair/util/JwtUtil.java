@@ -109,7 +109,7 @@ public class JwtUtil {
      * @param request 请求对象
      * @return 用户ID
      */
-    public Long getUserIdFromRequest(javax.servlet.http.HttpServletRequest request) {
+    public Long getUserIdFromRequest(jakarta.servlet.http.HttpServletRequest request) {
         String authorization = request.getHeader("Authorization");
         if (authorization == null || !authorization.startsWith("Bearer ")) {
             return null;
